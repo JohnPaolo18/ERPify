@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "ERPify",
+    "scheme": "erpify",
     "slug": "ERPify",
     "version": "1.0.0"
   }
