@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/HomeScreen";
 import ProfileScreen from "./screens/ProfileScreen";
@@ -9,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./screens/LoginScreen";
+import LikedSongsScreen from "./screens/LikedSongsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,6 +33,7 @@ function BottomTabs() {
         borderTopWidth: 0,
       }}
     >
+      {/* Home Screen */}
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -42,13 +43,13 @@ function BottomTabs() {
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Entypo name="home" size={24} color="black" />
+              <Entypo name="home" size={24} color="white" />
             ) : (
-              <AntDesign name="home" size={24} color="black" />
+              <AntDesign name="home" size={24} color="gray" />
             ),
         }}
       />
-
+      {/* Profile Screen */}
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
@@ -58,9 +59,9 @@ function BottomTabs() {
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Ionicons name="person" size={24} color="black" />
+              <Ionicons name="person" size={24} color="white" />
             ) : (
-              <Ionicons name="person-outline" size={24} color="black" />
+              <Ionicons name="person-outline" size={24} color="gray" />
             ),
         }}
       />
@@ -83,6 +84,12 @@ function Navigation() {
         <Stack.Screen
           name="Main"
           component={BottomTabs}
+          options={{ headerShown: false }}
+        />
+        {/* Liked Songs Screen */}
+        <Stack.Screen
+          name="Liked"
+          component={LikedSongsScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

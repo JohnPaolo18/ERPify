@@ -1,72 +1,248 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  Image,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { width } from "react-native-password-strength-meter/src/style";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import ArtistCard from "../components/ArtistCard";
+import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
+import {
+  getUserProfile,
+  getRecentlyPlayed,
+  getTopArtists,
+} from "../helpers/spotifyAPI";
 
 const HomeScreen = () => {
-  const [userProfie, setUserProfile] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const profileData = await getUserProfile();
+      if (profileData.error) {
+        navigation.navigate("Login");
+      } else {
+        setUserProfile(profileData);
+      }
+
+      const recentlyPlayedData = await getRecentlyPlayed();
+      setRecentlyPlayed(recentlyPlayedData);
+
+      const topArtistsData = await getTopArtists();
+      setTopArtists(topArtistsData);
+    };
+
+    fetchData();
+  }, []);
+
   const greetingMessage = () => {
     const currentTime = new Date().getHours();
-    if (currentTime < 12) {
-      return "Good Morning";
-    } else if (currentTime < 18) {
-      return "Good Afternoon";
-    } else {
-      return "Good Evening";
-    }
+    if (currentTime < 12) return "Good Morning";
+    if (currentTime < 16) return "Good Afternoon";
+    return "Good Evening";
   };
   const message = greetingMessage();
-  const getProfile = async () => {
-    const accessToken = await AsyncStorage.getItem("accessToken");
-    try {
-      const response = await fetch("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      setUserProfile(data);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-  useEffect(() => {
-    getProfile();
-  }, []);
-  console.log(userProfile);
 
   return (
-    <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
-      <ScrollView style={{ marginTop: 50 }}>
-        <View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Image
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                resizeMode: "cover",
-              }}
-              source={{ uri: userProfile?.images[0].url }}
+    //main container
+    <LinearGradient colors={["#040306", "#131624"]} style={styles.container}>
+      <FlatList
+        data={[{ key: "Header" }]}
+        renderItem={() => (
+          <>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={styles.profileSection}>
+                <Image
+                  source={{
+                    uri:
+                      userProfile?.images?.[0]?.url ||
+                      "https://via.placeholder.com/150",
+                  }}
+                  style={styles.profileImage}
+                />
+                <Text style={styles.greetingMessage}>{message}</Text>
+              </View>
+              <MaterialCommunityIcons
+                name="lightning-bolt-outline"
+                size={24}
+                color="white"
+              />
+            </View>
+
+            {/* Filter Section */}
+            <View style={styles.filterContainer}>
+              <Pressable style={styles.filterButton}>
+                <Text style={styles.filterText}>Music</Text>
+              </Pressable>
+              <Pressable style={styles.filterButton}>
+                <Text style={styles.filterText}>Podcasts & Shows</Text>
+              </Pressable>
+            </View>
+
+            {/* Liked Songs Section */}
+            <View style={styles.likedSongsContainer}>
+              <Pressable
+                onPress={() => navigation.navigate("Liked")}
+                style={styles.likedSongsCard}
+              >
+                <LinearGradient colors={["#33006F", "#FFFFFF"]}>
+                  <View style={styles.iconContainer}>
+                    <AntDesign name="heart" size={24} color="white" />
+                  </View>
+                </LinearGradient>
+                <Text style={styles.likedSongsText}>Liked Songs</Text>
+              </Pressable>
+
+              <View style={styles.randomArtistCard}>
+                <Image
+                  source={{ uri: "https://i.pravatar.cc/100" }}
+                  style={styles.randomArtistImage}
+                />
+                <Text style={styles.randomArtistText}>Coffee Mood</Text>
+              </View>
+            </View>
+
+            {/* Recently Played Section */}
+            <Text style={styles.sectionTitle}>Recently Played</Text>
+            <FlatList
+              data={recentlyPlayed}
+              renderItem={({ item }) => <RecentlyPlayedCard item={item} />}
+              keyExtractor={(item, index) => `${item.track.id}-${index}`}
+              horizontal
+              contentContainerStyle={styles.recentlyPlayedContent}
+              showsHorizontalScrollIndicator={false}
             />
-            <Text
-              style={{
-                marginLeft: 10,
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "white",
-              }}
-            >
-              {message}
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
+
+            {/* Top Artists Section */}
+            <Text style={styles.sectionTitle}>Your Top Artists</Text>
+          </>
+        )}
+        ListFooterComponent={
+          <FlatList
+            data={topArtists}
+            renderItem={({ item }) => <ArtistCard item={item} />}
+            keyExtractor={(item) => item.id}
+            horizontal
+            contentContainerStyle={styles.topArtistsContent}
+            showsHorizontalScrollIndicator={false}
+          />
+        }
+        contentContainerStyle={styles.flatListContent}
+        showsVerticalScrollIndicator={false}
+      />
     </LinearGradient>
   );
 };
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  header: {
+    padding: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  profileSection: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  greetingMessage: {
+    color: "white",
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  filterContainer: {
+    flexDirection: "row",
+    margin: 10,
+  },
+  filterButton: {
+    backgroundColor: "#282828",
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  filterText: {
+    color: "white",
+    fontSize: 14,
+  },
+  likedSongsContainer: {
+    flexDirection: "row",
+    margin: 10,
+    justifyContent: "space-between",
+  },
+  likedSongsCard: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#202020",
+    borderRadius: 4,
+    padding: 10,
+    marginRight: 5,
+  },
+  iconContainer: {
+    width: 55,
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  likedSongsText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  randomArtistCard: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#202020",
+    borderRadius: 4,
+    padding: 10,
+    marginLeft: 5,
+  },
+  randomArtistImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  randomArtistText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  sectionTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 15,
+    marginBottom: 10,
+  },
+  recentlyPlayedContent: {
+    paddingLeft: 15,
+  },
+  flatListContent: {
+    paddingBottom: 20,
+  },
+  topArtistsContent: {
+    paddingLeft: 15,
+  },
+});
