@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/HomeScreen";
-import ProfileScreen from "./screens/ProfileScreen";
+import LibraryScreen from "./screens/LibraryScreen";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./screens/LoginScreen";
 import LikedSongsScreen from "./screens/LikedSongsScreen";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Tab = createBottomTabNavigator();
 
@@ -49,19 +50,19 @@ function BottomTabs() {
             ),
         }}
       />
-      {/* Profile Screen */}
+      {/* Your Library */}
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={LibraryScreen}
         options={{
-          tabBarLabel: "Profile",
+          tabBarLabel: "Your Library",
           headerShown: false,
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Ionicons name="person" size={24} color="white" />
+              <MaterialIcons name="library-music" size={24} color="white" />
             ) : (
-              <Ionicons name="person-outline" size={24} color="gray" />
+              <MaterialIcons name="library-music" size={24} color="gray" />
             ),
         }}
       />
