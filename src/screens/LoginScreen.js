@@ -8,7 +8,6 @@ import {
   Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import ERPifyLogo from "../assets/icons/ERPify.png";
 import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -81,7 +80,6 @@ const LoginScreen = () => {
 
         {/* Spotify Login Button */}
         <Pressable style={styles.LoginButton} onPress={() => promptAsync()}>
-          <FontAwesome name="spotify" size={24} color="green" />
           <Text style={styles.LoginButtonText}>Log in with Spotify</Text>
         </Pressable>
 
