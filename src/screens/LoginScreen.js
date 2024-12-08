@@ -24,7 +24,7 @@ const LoginScreen = () => {
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: "917c180287da455cb6536a935f3a80ff",
+      clientId: "525fb68a3b7a4822abd082209d537be8",
       scopes: [
         "user-read-email",
         "playlist-read-private",

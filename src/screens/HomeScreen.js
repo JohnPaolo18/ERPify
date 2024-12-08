@@ -13,6 +13,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
+import SearchBar from "../components/SearchBar"; 
 import {
   getUserProfile,
   getRecentlyPlayed,
@@ -53,7 +54,7 @@ const HomeScreen = () => {
   const message = greetingMessage();
 
   return (
-    //main container
+    // main container
     <LinearGradient colors={["#040306", "#131624"]} style={styles.container}>
       <FlatList
         data={[{ key: "Header" }]}
@@ -78,6 +79,9 @@ const HomeScreen = () => {
                 color="white"
               />
             </View>
+
+            {/* Search Bar */}
+            <SearchBar /> 
 
             {/* Filter Section */}
             <View style={styles.filterContainer}>

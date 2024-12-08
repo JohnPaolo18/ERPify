@@ -85,3 +85,26 @@ export const getSavedTracks = async () => {
     return { error: err.message };
   }
 };
+
+// Spotify Search Function
+export const searchSpotify = async (query) => {
+  const token = await AsyncStorage.getItem("token");
+
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track,album,artist&limit=10`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data?.tracks?.items || [];
+  } catch (error) {
+    console.error("Error searching Spotify:", error);
+    return [];
+  }
+};
