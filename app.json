@@ -3,6 +3,7 @@
     "name": "ERPify",
     "scheme": "erpify",
     "slug": "ERPify",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "newArchedEnabled": true
   }
 }
