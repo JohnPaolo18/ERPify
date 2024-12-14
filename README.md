@@ -6,7 +6,7 @@ This is a music app that plays music from Spotify API
 2. Make an app on Spotify developer using your Spotify Account (it is important to save the redirect URI that matches the expo direct URI in the logs)
 3. Go to src/helpers/spotifhyAPI.js and paste your clientid and client secret in the refresh access token
 4. Go ot src/screens/LoginScreen.js and paste again the client id and your redirect URI (example : exp://11.11.2.300:8081)
-##5. According to Spotify's documentation, utilizing the Web Playback SDK requires the Spotify app to be active on the user's device. This is because the SDK functions as a Spotify Connect device, necessitating the Spotify app to manage playback and ensure compliance with licensing agreements. -- please refer to the link for more details-- https://developer.spotify.com/documentation/web-playback-sdk
+5. According to Spotify's documentation, utilizing the Web Playback SDK requires the Spotify app to be active on the user's device. This is because the SDK functions as a Spotify Connect device, necessitating the Spotify app to manage playback and ensure compliance with licensing agreements. -- please refer to the link for more details-- https://developer.spotify.com/documentation/web-playback-sdk
    
 
 **Before running the app make sure to run -- npm install
