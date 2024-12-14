@@ -24,8 +24,8 @@ export const refreshAccessToken = async () => {
         params: {
           grant_type: "refresh_token",
           refresh_token: refreshToken,
-          client_id: "4e94ff6dea6f484bb7e898eb00cef58b",
-          client_secret: "e2375b7936074823ab400a1264df45f9",
+          client_id: "PASTE_YOUR_CLIENT_ID_HERE", // Update this to match Spotify's dashboard
+          client_secret: "PASTE_YOUR_CLIENT_SECRET_HERE", // Update this to match Spotify's dashboard
         },
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

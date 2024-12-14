@@ -24,7 +24,7 @@ const LoginScreen = () => {
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: "4e94ff6dea6f484bb7e898eb00cef58b",
+      clientId: "PASTE_YOUR_CLIENT_ID_HERE", // Update this to match Spotify's dashboard
       scopes: [
         "user-read-email",
         "playlist-read-private",
