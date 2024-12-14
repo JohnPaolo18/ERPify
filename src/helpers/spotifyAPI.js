@@ -511,3 +511,79 @@ export const fetchTracksByArtist = async (artistId) => {
     return [];
   }
 };
+
+// Fetch User Playlists
+export const fetchUserPlaylists = async () => {
+  const token = await AsyncStorage.getItem('token');
+  if (!token) {
+    console.error('No access token available');
+    return [];
+  }
+
+  try {
+    const response = await axios.get('https://api.spotify.com/v1/me/playlists', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.items;
+  } catch (error) {
+    console.error('Error fetching playlists:', error.message);
+    return [];
+  }
+};
+
+// Fetch Playlist Tracks
+export const fetchPlaylistTracks = async (playlistId) => {
+  const token = await AsyncStorage.getItem('token');
+  if (!token) {
+    console.error('No access token available');
+    return [];
+  }
+
+  try {
+    const response = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.items.map(item => item.track);
+  } catch (error) {
+    console.error('Error fetching playlist tracks:', error.message);
+    return [];
+  }
+};
+
+// Fetch User Albums
+export const fetchUserAlbums = async () => {
+  const token = await AsyncStorage.getItem('token');
+  if (!token) {
+    console.error('No access token available');
+    return [];
+  }
+
+  try {
+    const response = await axios.get('https://api.spotify.com/v1/me/albums', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.items.map(item => item.album);
+  } catch (error) {
+    console.error('Error fetching albums:', error.message);
+    return [];
+  }
+};
+
+// Fetch Album Tracks
+export const fetchAlbumTracks = async (albumId) => {
+  const token = await AsyncStorage.getItem('token');
+  if (!token) {
+    console.error('No access token available');
+    return [];
+  }
+
+  try {
+    const response = await axios.get(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.items;
+  } catch (error) {
+    console.error('Error fetching album tracks:', error.message);
+    return [];
+  }
+};

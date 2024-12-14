@@ -8,7 +8,12 @@ import LikedSongsScreen from "./screens/LikedSongsScreen";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import PlaylistScreen from "./screens/PlaylistScreen";
+import ArtistsScreen from "./screens/ArtistsScreen";
+import AlbumsScreen from "./screens/AlbumsScreen";
+import PlaylistTracksScreen from "./screens/PlaylistTracksScreen";
 import ArtistTracksScreen from "./screens/ArtistTracksScreen";
+import AlbumTracksScreen from "./screens/AlbumTracksScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -83,10 +88,34 @@ function Navigation() {
         component={LikedSongsScreen}
         options={{ headerShown: false }}
       />
-
+      <Stack.Screen
+        name="Playlist"
+        component={PlaylistScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Artists"
+        component={ArtistsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Albums"
+        component={AlbumsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PlaylistTracks"
+        component={PlaylistTracksScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="ArtistTracks"
         component={ArtistTracksScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AlbumTracks"
+        component={AlbumTracksScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
