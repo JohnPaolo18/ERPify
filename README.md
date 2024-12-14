@@ -9,9 +9,10 @@ This is a music app that plays music from Spotify API
 5. According to Spotify's documentation, utilizing the Web Playback SDK requires the Spotify app to be active on the user's device. This is because the SDK functions as a Spotify Connect device, necessitating the Spotify app to manage playback and ensure compliance with licensing agreements. -- please refer to the link for more details-- https://developer.spotify.com/documentation/web-playback-sdk
    
 
-**Before running the app make sure to run -- npm install
-**run npx expo start**
-**sometimes expo has updates and will give a warning that you need to install the latest version, just install the latest and the app should run :)
+**Before running the app make sure to run -- 
+1. npm install
+2, And then run -- npx expo start
+**Sometimes expo has updates and will give a warning that you need to install the latest version, just install the latest and the app should run :)**
 
 ## However you can install all the npm manually if you wish
 npm install @expo/metro-runtime@~4.0.0 \
