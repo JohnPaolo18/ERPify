@@ -1,17 +1,17 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
 import LibraryScreen from "./screens/LibraryScreen";
-import Entypo from "@expo/vector-icons/Entypo";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./screens/LoginScreen";
 import LikedSongsScreen from "./screens/LikedSongsScreen";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import ArtistTracksScreen from "./screens/ArtistTracksScreen";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 function BottomTabs() {
   return (
@@ -32,16 +32,14 @@ function BottomTabs() {
           },
         },
         borderTopWidth: 0,
+        headerShown: false,
       }}
     >
-      {/* Home Screen */}
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           tabBarLabel: "Home",
-          headerShown: false,
-          tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
               <Entypo name="home" size={24} color="white" />
@@ -50,14 +48,11 @@ function BottomTabs() {
             ),
         }}
       />
-      {/* Your Library */}
       <Tab.Screen
-        name="Profile"
+        name="Library"
         component={LibraryScreen}
         options={{
           tabBarLabel: "Your Library",
-          headerShown: false,
-          tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
               <MaterialIcons name="library-music" size={24} color="white" />
@@ -70,31 +65,31 @@ function BottomTabs() {
   );
 }
 
-const Stack = createNativeStackNavigator();
 function Navigation() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/* Login Screen */}
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        {/* Main Screen */}
-        <Stack.Screen
-          name="Main"
-          component={BottomTabs}
-          options={{ headerShown: false }}
-        />
-        {/* Liked Songs Screen */}
-        <Stack.Screen
-          name="Liked"
-          component={LikedSongsScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Main"
+        component={BottomTabs}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Liked"
+        component={LikedSongsScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="ArtistTracks"
+        component={ArtistTracksScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 }
 

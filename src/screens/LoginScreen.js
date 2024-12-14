@@ -18,25 +18,38 @@ const LoginScreen = () => {
 
   // Generate the redirect URI with the custom scheme
   const redirectUri = makeRedirectUri({
+<<<<<<< Updated upstream
     native: "erpify://", // Use the custom scheme defined in app.json
+=======
+    native: "exp://10.10.4.206:8081", // Use the custom scheme defined in app.json
+>>>>>>> Stashed changes
   });
   console.log("Generated Redirect URI:", redirectUri);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
+<<<<<<< Updated upstream
       clientId: "525fb68a3b7a4822abd082209d537be8",
+=======
+      clientId: "4e94ff6dea6f484bb7e898eb00cef58b",
+>>>>>>> Stashed changes
       scopes: [
         "user-read-email",
         "playlist-read-private",
         "playlist-read-collaborative",
         "playlist-modify-public",
         "user-library-read",
+        "user-library-modify",
         "user-read-recently-played",
         "user-top-read",
       ],
       responseType: "token", // Use the Implicit Grant Flow
       redirectUri: makeRedirectUri({
+<<<<<<< Updated upstream
         native: "erpify://", // Use the custom scheme defined in app.json
+=======
+        native: "exp://10.10.4.206:8081", // Use the custom scheme defined in app.json
+>>>>>>> Stashed changes
       }),
     },
     { authorizationEndpoint: "https://accounts.spotify.com/authorize" }

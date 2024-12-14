@@ -6,6 +6,7 @@ import {
   FlatList,
   Pressable,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -13,11 +14,16 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
-import SearchBar from "../components/SearchBar"; 
+import SearchBar from "../components/SearchBar";
 import {
   getUserProfile,
   getRecentlyPlayed,
   getTopArtists,
+<<<<<<< Updated upstream
+=======
+  fetchTracks,
+  playTrack,
+>>>>>>> Stashed changes
 } from "../helpers/spotifyAPI";
 
 const HomeScreen = () => {
@@ -53,6 +59,23 @@ const HomeScreen = () => {
   };
   const message = greetingMessage();
 
+  useEffect(() => {
+    const fetchArtists = async () => {
+      const artists = await getTopArtists();
+      setTopArtists(artists);
+    };
+
+    fetchArtists();
+  }, []);
+
+  useEffect(() => {
+    console.log("Top Artists:", topArtists); // This will log the `topArtists` array to the console
+  }, [topArtists]); // It will log whenever `topArtists` changes
+
+  const handleArtistPress = (artistId) => {
+    navigation.navigate("ArtistTracks", { artistId });
+  };
+
   return (
     // main container
     <LinearGradient colors={["#040306", "#131624"]} style={styles.container}>
@@ -81,17 +104,7 @@ const HomeScreen = () => {
             </View>
 
             {/* Search Bar */}
-            <SearchBar /> 
-
-            {/* Filter Section */}
-            <View style={styles.filterContainer}>
-              <Pressable style={styles.filterButton}>
-                <Text style={styles.filterText}>Music</Text>
-              </Pressable>
-              <Pressable style={styles.filterButton}>
-                <Text style={styles.filterText}>Podcasts & Shows</Text>
-              </Pressable>
-            </View>
+            <SearchBar />
 
             {/* Liked Songs Section */}
             <View style={styles.likedSongsContainer}>
@@ -106,21 +119,22 @@ const HomeScreen = () => {
                 </LinearGradient>
                 <Text style={styles.likedSongsText}>Liked Songs</Text>
               </Pressable>
-
-              <View style={styles.randomArtistCard}>
-                <Image
-                  source={{ uri: "https://i.pravatar.cc/100" }}
-                  style={styles.randomArtistImage}
-                />
-                <Text style={styles.randomArtistText}>Coffee Mood</Text>
-              </View>
             </View>
 
             {/* Recently Played Section */}
             <Text style={styles.sectionTitle}>Recently Played</Text>
             <FlatList
               data={recentlyPlayed}
+<<<<<<< Updated upstream
               renderItem={({ item }) => <RecentlyPlayedCard item={item} />}
+=======
+              renderItem={({ item }) => (
+                <RecentlyPlayedCard
+                  item={item}
+                  onPress={() => playTrack(item.track.uri)}
+                />
+              )}
+>>>>>>> Stashed changes
               keyExtractor={(item, index) => `${item.track.id}-${index}`}
               horizontal
               contentContainerStyle={styles.recentlyPlayedContent}
@@ -134,7 +148,9 @@ const HomeScreen = () => {
         ListFooterComponent={
           <FlatList
             data={topArtists}
-            renderItem={({ item }) => <ArtistCard item={item} />}
+            renderItem={({ item }) => (
+              <ArtistCard item={item} onPress={handleArtistPress} />
+            )}
             keyExtractor={(item) => item.id}
             horizontal
             contentContainerStyle={styles.topArtistsContent}
