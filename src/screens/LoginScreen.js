@@ -18,26 +18,29 @@ const LoginScreen = () => {
 
   // Generate the redirect URI with the custom scheme
   const redirectUri = makeRedirectUri({
-    native: "erpify://", // Use the custom scheme defined in app.json
+    native: "exp://192.168.24.252:8081", // Update this to match Spotify's dashboard
   });
   console.log("Generated Redirect URI:", redirectUri);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: "525fb68a3b7a4822abd082209d537be8",
+      clientId: "PASTE_YOUR_CLIENT_ID_HERE", // Update this to match Spotify's dashboard
       scopes: [
         "user-read-email",
         "playlist-read-private",
         "playlist-read-collaborative",
         "playlist-modify-public",
         "user-library-read",
+        "user-library-modify",
         "user-read-recently-played",
         "user-top-read",
+        "user-read-playback-state",
+        "user-modify-playback-state",
+        "user-read-currently-playing",
+        "streaming", // Required for controlling playback
       ],
       responseType: "token", // Use the Implicit Grant Flow
-      redirectUri: makeRedirectUri({
-        native: "erpify://", // Use the custom scheme defined in app.json
-      }),
+      redirectUri: redirectUri,
     },
     { authorizationEndpoint: "https://accounts.spotify.com/authorize" }
   );
@@ -48,7 +51,10 @@ const LoginScreen = () => {
       AsyncStorage.setItem("token", response.params.access_token)
         .then(() => {
           console.log("Token set in storage:", response.params.access_token);
-          AsyncStorage.setItem("expirationDate", expirationDate.toString());
+          return AsyncStorage.setItem(
+            "expirationDate",
+            expirationDate.toString()
+          );
         })
         .then(() => {
           console.log("Expiration date set in storage");
@@ -74,7 +80,6 @@ const LoginScreen = () => {
         {/* Separator */}
         <View style={styles.separatorContainer}>
           <View style={styles.separatorLine} />
-          {/* <Text style={styles.orText}>or</Text> */}
           <View style={styles.separatorLine} />
         </View>
 

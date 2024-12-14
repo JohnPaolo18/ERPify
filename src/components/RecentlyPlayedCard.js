@@ -1,18 +1,21 @@
-import { Text, Pressable, Image } from "react-native";
+import { Text, Pressable, Image, Alert } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { playTrack } from "../helpers/spotifyAPI";
 
-const RecentlyPlayedCard = ({ item }) => {
-  const navigation = useNavigation();
-  return (
-    <Pressable
-      onPress={() =>
-        navigation.navigate("Info", {
-          item: item,
-        })
+const RecentlyPlayedCard = ({ item, onPlay }) => {
+  const handlePress = async () => {
+    if (item.track.uri) {
+      await playTrack(item.track.uri); // Play the track
+      if (onPlay) {
+        onPlay(); // Trigger the callback to update the parent component
       }
-      style={{ margin: 10 }}
-    >
+    } else {
+      Alert.alert("Playback not available", "This track does not have a URI.");
+    }
+  };
+
+  return (
+    <Pressable onPress={handlePress} style={{ margin: 10 }}>
       <Image
         style={{ width: 130, height: 130, borderRadius: 5 }}
         source={{ uri: item.track.album.images[0].url }}

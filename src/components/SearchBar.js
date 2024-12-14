@@ -1,10 +1,37 @@
-import React, { useState } from "react";
-import { TextInput, Button, FlatList, Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { searchSpotify } from "../helpers/spotifyAPI";
+import React, { useEffect, useState } from "react";
+import {
+  TextInput,
+  Button,
+  FlatList,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import {
+  searchSpotify,
+  playTrack,
+  addToLikedSongs,
+} from "../helpers/spotifyAPI";
+import { AntDesign } from "@expo/vector-icons";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [likedSongs, setLikedSongs] = useState(new Set());
+
+  useEffect(() => {
+    // Update liked status in search results when likedSongs changes
+    setSearchResults((currentResults) =>
+      currentResults.map((song) => ({
+        ...song,
+        isLiked: likedSongs.has(song.id),
+      }))
+    );
+  }, [likedSongs]);
 
   const handleSearch = async () => {
     if (!query.trim()) {
@@ -12,13 +39,46 @@ const SearchBar = () => {
       return;
     }
 
-    const results = await searchSpotify(query);
-    setSearchResults(results);
+    try {
+      const results = await searchSpotify(query);
+      setSearchResults(
+        results.map((item) => ({
+          ...item,
+          isLiked: likedSongs.has(item.id),
+        }))
+      );
+    } catch (error) {
+      console.error("Error searching Spotify:", error);
+      Alert.alert("Error", "Failed to search Spotify. Please try again.");
+    }
   };
 
-  const handleResultClick = (item) => {
-    console.log("Selected Item: ", item);
-    setQuery(item.name);
+  const handleResultClick = async (item) => {
+    if (item.uri) {
+      try {
+        await playTrack(item.uri); // Play the selected track
+      } catch (error) {
+        console.error("Error playing track:", error);
+        Alert.alert("Error", "Failed to play the track. Please try again.");
+      }
+    } else {
+      Alert.alert("Error", "This track does not have a valid URI.");
+    }
+  };
+
+  const handleAddToLiked = async (item) => {
+    try {
+      const response = await addToLikedSongs(item.id);
+      if (response.success) {
+        Alert.alert("Success", `"${item.name}" has been added to Liked Songs.`);
+        setLikedSongs(new Set([...likedSongs, item.id]));
+      } else {
+        Alert.alert("Error", "Failed to add the song to Liked Songs.");
+      }
+    } catch (error) {
+      console.error("Error adding to Liked Songs:", error);
+      Alert.alert("Error", "An unexpected error occurred.");
+    }
   };
 
   const clearSearch = () => {
@@ -38,7 +98,7 @@ const SearchBar = () => {
           onChangeText={setQuery}
           onSubmitEditing={handleSearch}
         />
-        {/* clearSearch */}
+        {/* Clear Search */}
         {query !== "" && (
           <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
             <Text style={styles.clearText}>Clear</Text>
@@ -53,18 +113,34 @@ const SearchBar = () => {
           data={searchResults}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.resultItem}
-              onPress={() => handleResultClick(item)}
-            >
+            <View style={styles.resultItem}>
               {item.album?.images?.[0]?.url && (
-                <Image source={{ uri: item.album.images[0].url }} style={styles.image} />
+                <Image
+                  source={{ uri: item.album.images[0].url }}
+                  style={styles.image}
+                />
               )}
               <View style={styles.textContainer}>
                 <Text style={styles.songName}>{item.name}</Text>
                 <Text style={styles.artistName}>{item.artists[0]?.name}</Text>
               </View>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleResultClick(item)}
+                style={styles.playButton}
+              >
+                <AntDesign name="play" size={24} color="#7CEEFF" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleAddToLiked(item)}
+                style={styles.heartButton}
+              >
+                <Entypo
+                  name={item.isLiked ? "heart" : "heart-outlined"}
+                  size={24}
+                  color={item.isLiked ? "#7CEEFF" : "white"}
+                />
+              </TouchableOpacity>
+            </View>
           )}
           contentContainerStyle={styles.resultsContainer}
         />
@@ -88,7 +164,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     paddingLeft: 10,
-    paddingRight: 60, 
+    paddingRight: 60,
     backgroundColor: "#282828",
     color: "white",
     borderRadius: 5,
@@ -96,7 +172,7 @@ const styles = StyleSheet.create({
   clearButton: {
     position: "absolute",
     right: 10,
-    top: 7, 
+    top: 7,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -130,8 +206,15 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 14,
   },
-  resultsContainer: {
-    paddingBottom: 20,
+  playButton: {
+    marginHorizontal: 10,
+  },
+  playText: {
+    color: "#1DB954",
+    fontSize: 18,
+  },
+  heartButton: {
+    marginHorizontal: 10,
   },
 });
 
