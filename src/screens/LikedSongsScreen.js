@@ -5,25 +5,17 @@ import {
   View,
   FlatList,
   Image,
-<<<<<<< Updated upstream
-  Pressable,
-=======
   TouchableOpacity,
   Alert,
->>>>>>> Stashed changes
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-<<<<<<< Updated upstream
-import { getSavedTracks } from "../helpers/spotifyAPI"; // Import helper
-=======
 import {
   getSavedTracks,
   playTrack,
   removeTrackFromLiked,
 } from "../helpers/spotifyAPI";
->>>>>>> Stashed changes
 
 const LikedSongsScreen = () => {
   const [savedTracks, setSavedTracks] = useState([]);
@@ -75,21 +67,6 @@ const LikedSongsScreen = () => {
     const track = item.track;
 
     return (
-<<<<<<< Updated upstream
-      <View style={styles.trackItem}>
-        <Image
-          source={{ uri: track?.album?.images?.[0]?.url }}
-          style={styles.albumArt}
-        />
-        <View style={styles.trackInfo}>
-          <Text style={styles.trackName} numberOfLines={1}>
-            {track?.name}
-          </Text>
-          <Text style={styles.artistName} numberOfLines={1}>
-            {track?.artists?.map((artist) => artist.name).join(", ")}
-          </Text>
-        </View>
-=======
       <View style={styles.resultItem}>
         {track.album?.images?.[0]?.url && (
           <Image
@@ -115,7 +92,6 @@ const LikedSongsScreen = () => {
         >
           <Entypo name="heart" size={24} color="#7CEEFF" />
         </TouchableOpacity>
->>>>>>> Stashed changes
       </View>
     );
   };

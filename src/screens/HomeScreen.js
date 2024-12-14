@@ -6,7 +6,6 @@ import {
   FlatList,
   Pressable,
   Image,
-  TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -15,15 +14,12 @@ import { useNavigation } from "@react-navigation/native";
 import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
 import SearchBar from "../components/SearchBar";
+import MusicControls from "../components/MusicControls"; // Import MusicControls
 import {
   getUserProfile,
   getRecentlyPlayed,
   getTopArtists,
-<<<<<<< Updated upstream
-=======
-  fetchTracks,
   playTrack,
->>>>>>> Stashed changes
 } from "../helpers/spotifyAPI";
 
 const HomeScreen = () => {
@@ -49,6 +45,14 @@ const HomeScreen = () => {
     };
 
     fetchData();
+
+    // Poll recently played every 15 seconds
+    const interval = setInterval(async () => {
+      const updatedRecentlyPlayed = await getRecentlyPlayed();
+      setRecentlyPlayed(updatedRecentlyPlayed);
+    }, 15000);
+
+    return () => clearInterval(interval); // Cleanup on component unmount
   }, []);
 
   const greetingMessage = () => {
@@ -59,25 +63,11 @@ const HomeScreen = () => {
   };
   const message = greetingMessage();
 
-  useEffect(() => {
-    const fetchArtists = async () => {
-      const artists = await getTopArtists();
-      setTopArtists(artists);
-    };
-
-    fetchArtists();
-  }, []);
-
-  useEffect(() => {
-    console.log("Top Artists:", topArtists); // This will log the `topArtists` array to the console
-  }, [topArtists]); // It will log whenever `topArtists` changes
-
   const handleArtistPress = (artistId) => {
     navigation.navigate("ArtistTracks", { artistId });
   };
 
   return (
-    // main container
     <LinearGradient colors={["#040306", "#131624"]} style={styles.container}>
       <FlatList
         data={[{ key: "Header" }]}
@@ -125,16 +115,12 @@ const HomeScreen = () => {
             <Text style={styles.sectionTitle}>Recently Played</Text>
             <FlatList
               data={recentlyPlayed}
-<<<<<<< Updated upstream
-              renderItem={({ item }) => <RecentlyPlayedCard item={item} />}
-=======
               renderItem={({ item }) => (
                 <RecentlyPlayedCard
                   item={item}
                   onPress={() => playTrack(item.track.uri)}
                 />
               )}
->>>>>>> Stashed changes
               keyExtractor={(item, index) => `${item.track.id}-${index}`}
               horizontal
               contentContainerStyle={styles.recentlyPlayedContent}
@@ -160,6 +146,9 @@ const HomeScreen = () => {
         contentContainerStyle={styles.flatListContent}
         showsVerticalScrollIndicator={false}
       />
+
+      {/* Add Music Controls */}
+      <MusicControls />
     </LinearGradient>
   );
 };
@@ -189,20 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  filterContainer: {
-    flexDirection: "row",
-    margin: 10,
-  },
-  filterButton: {
-    backgroundColor: "#282828",
-    padding: 10,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  filterText: {
-    color: "white",
-    fontSize: 14,
-  },
   likedSongsContainer: {
     flexDirection: "row",
     margin: 10,
@@ -224,26 +199,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   likedSongsText: {
-    color: "white",
-    fontSize: 13,
-    fontWeight: "bold",
-    marginLeft: 10,
-  },
-  randomArtistCard: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#202020",
-    borderRadius: 4,
-    padding: 10,
-    marginLeft: 5,
-  },
-  randomArtistImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  randomArtistText: {
     color: "white",
     fontSize: 13,
     fontWeight: "bold",

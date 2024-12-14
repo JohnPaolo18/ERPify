@@ -1,8 +1,3 @@
-<<<<<<< Updated upstream
-import React, { useState } from "react";
-import { TextInput, Button, FlatList, Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { searchSpotify } from "../helpers/spotifyAPI";
-=======
 import React, { useEffect, useState } from "react";
 import {
   TextInput,
@@ -22,7 +17,6 @@ import {
   addToLikedSongs,
 } from "../helpers/spotifyAPI";
 import { AntDesign } from "@expo/vector-icons";
->>>>>>> Stashed changes
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -30,7 +24,7 @@ const SearchBar = () => {
   const [likedSongs, setLikedSongs] = useState(new Set());
 
   useEffect(() => {
-    // This will update the liked status in the search results when likedSongs changes
+    // Update liked status in search results when likedSongs changes
     setSearchResults((currentResults) =>
       currentResults.map((song) => ({
         ...song,
@@ -45,10 +39,6 @@ const SearchBar = () => {
       return;
     }
 
-<<<<<<< Updated upstream
-    const results = await searchSpotify(query);
-    setSearchResults(results);
-=======
     try {
       const results = await searchSpotify(query);
       setSearchResults(
@@ -61,12 +51,19 @@ const SearchBar = () => {
       console.error("Error searching Spotify:", error);
       Alert.alert("Error", "Failed to search Spotify. Please try again.");
     }
->>>>>>> Stashed changes
   };
 
-  const handleResultClick = (item) => {
-    console.log("Selected Item: ", item);
-    setQuery(item.name);
+  const handleResultClick = async (item) => {
+    if (item.uri) {
+      try {
+        await playTrack(item.uri); // Play the selected track
+      } catch (error) {
+        console.error("Error playing track:", error);
+        Alert.alert("Error", "Failed to play the track. Please try again.");
+      }
+    } else {
+      Alert.alert("Error", "This track does not have a valid URI.");
+    }
   };
 
   const handleAddToLiked = async (item) => {
@@ -101,7 +98,7 @@ const SearchBar = () => {
           onChangeText={setQuery}
           onSubmitEditing={handleSearch}
         />
-        {/* clearSearch */}
+        {/* Clear Search */}
         {query !== "" && (
           <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
             <Text style={styles.clearText}>Clear</Text>
@@ -167,7 +164,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     paddingLeft: 10,
-    paddingRight: 60, 
+    paddingRight: 60,
     backgroundColor: "#282828",
     color: "white",
     borderRadius: 5,
@@ -175,7 +172,7 @@ const styles = StyleSheet.create({
   clearButton: {
     position: "absolute",
     right: 10,
-    top: 7, 
+    top: 7,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -209,10 +206,6 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 14,
   },
-<<<<<<< Updated upstream
-  resultsContainer: {
-    paddingBottom: 20,
-=======
   playButton: {
     marginHorizontal: 10,
   },
@@ -222,7 +215,6 @@ const styles = StyleSheet.create({
   },
   heartButton: {
     marginHorizontal: 10,
->>>>>>> Stashed changes
   },
 });
 

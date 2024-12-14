@@ -1,8 +1,5 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-<<<<<<< Updated upstream
-import { checkTokenValidity } from "../utils/authHelpers";
-=======
 
 // Check Token Validity
 export const checkTokenValidity = async () => {
@@ -48,7 +45,6 @@ export const refreshAccessToken = async () => {
     return null;
   }
 };
->>>>>>> Stashed changes
 
 // Get User Profile
 export const getUserProfile = async () => {
@@ -96,10 +92,7 @@ export const getTopArtists = async () => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-<<<<<<< Updated upstream
-=======
     console.log("Top Artists Response:", response.data.items); // Log the API response
->>>>>>> Stashed changes
     return response.data.items || [];
   } catch (err) {
     console.error("Error fetching top artists:", err.message);
@@ -131,10 +124,7 @@ export const getSavedTracks = async () => {
     }
 
     const data = await response.json();
-<<<<<<< Updated upstream
-=======
     console.log("Saved Tracks Response:", data.items); // Log the API response
->>>>>>> Stashed changes
     return data.items || [];
   } catch (err) {
     console.error("Error fetching liked songs:", err.message);
@@ -147,10 +137,6 @@ export const searchSpotify = async (query) => {
   const token = await AsyncStorage.getItem("token");
 
   try {
-<<<<<<< Updated upstream
-    const response = await fetch(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track,album,artist&limit=10`,
-=======
     const response = await axios.get(
       `https://api.spotify.com/v1/search?q=${query}&type=track&limit=10`,
       {
@@ -201,30 +187,6 @@ export const fetchTracks = async () => {
   }
 };
 
-// Get Available Devices
-// export const getAvailableDevices = async () => {
-//   const token = await AsyncStorage.getItem("token");
-//   if (!token) {
-//     console.error("No access token available");
-//     return [];
-//   }
-
-//   try {
-//     const response = await axios.get(
-//       "https://api.spotify.com/v1/me/player/devices",
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-//     return response.data.devices;
-//   } catch (error) {
-//     console.error("Error fetching devices", error);
-//     return [];
-//   }
-// };
-
 export const getAvailableDevices = async () => {
   const token = await AsyncStorage.getItem("token");
   if (!token) {
@@ -260,29 +222,25 @@ export const transferPlaybackToDevice = async (deviceId) => {
   }
 
   try {
-    await axios.put(
+    const response = await axios.put(
       "https://api.spotify.com/v1/me/player",
       {
         device_ids: [deviceId],
         play: true,
       },
->>>>>>> Stashed changes
       {
-        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    const data = await response.json();
-    return data?.tracks?.items || [];
+    console.log(`Playback transferred with status: ${response.status}`);
   } catch (error) {
-<<<<<<< Updated upstream
-    console.error("Error searching Spotify:", error);
-    return [];
-=======
-    console.error("Error transferring playback", error);
+    console.error(
+      "Error transferring playback",
+      error.response?.data || error.message
+    );
   }
 };
 
@@ -294,7 +252,7 @@ export const playTrack = async (trackUri) => {
     return;
   }
 
-  const devices = await getAvailableDevices();
+  const devices = await getAvailableDevices(); // Fetch devices
   if (devices.length === 0) {
     console.error("No available devices found");
     return;
@@ -302,9 +260,10 @@ export const playTrack = async (trackUri) => {
 
   const deviceId = devices[0].id; // Use the first available device
 
-  await transferPlaybackToDevice(deviceId);
+  await transferPlaybackToDevice(deviceId); // Transfer playback to the device
 
   try {
+    // Play the track on the specified device
     await axios.put(
       `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
       {
@@ -316,16 +275,27 @@ export const playTrack = async (trackUri) => {
         },
       }
     );
+    console.log(`Playing track: ${trackUri}`);
   } catch (error) {
-    console.error("Error playing track", error);
->>>>>>> Stashed changes
+    console.error("Error playing track", error.response?.data || error.message);
   }
 };
 
 // Fetch Currently Playing Track
+let isTokenInvalid = false;
+
 export const getCurrentlyPlaying = async () => {
+  // Stop further API calls if the token is invalid
+  if (isTokenInvalid) {
+    console.warn("Token is invalid. Stopping API calls.");
+    return null;
+  }
+
   const token = await AsyncStorage.getItem("token");
-  if (!token) return null;
+  if (!token) {
+    console.error("No access token available.");
+    return null;
+  }
 
   try {
     const response = await axios.get("https://api.spotify.com/v1/me/player", {
@@ -335,7 +305,12 @@ export const getCurrentlyPlaying = async () => {
     });
     return response.data; // Contains current playback data
   } catch (error) {
-    console.error("Error fetching currently playing:", error.message);
+    if (error.response?.status === 401) {
+      isTokenInvalid = true; // Mark token as invalid
+      console.error("Error fetching currently playing: Invalid token.");
+    } else {
+      console.error("Error fetching currently playing:", error.message);
+    }
     return null;
   }
 };
